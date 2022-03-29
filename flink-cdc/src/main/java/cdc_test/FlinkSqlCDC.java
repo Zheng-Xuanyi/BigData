@@ -31,9 +31,9 @@ public class FlinkSqlCDC {
                 " 'hostname' = 'hadoop101', " +
                 " 'port' = '3306', " +
                 " 'username' = 'root', " +
-                " 'password' = '000000', " +
-                " 'database-name' = 'cdc_test', " +
-                " 'table-name' = 'user_info' " +
+                " 'password' = '034417', " +
+                " 'database-name' = 'flink_test', " +
+                " 'table-name' = 'cdc_test' " +
                 ")");
 
         //3.查询数据并转换为流输出

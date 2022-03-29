@@ -18,7 +18,6 @@ import java.util.List;
  * @create 2022-03-28 0:24
  * 自定义反序列化
  */
-public class CustomerDeserializationSchema implements DebeziumDeserializationSchema<String> {
 
     /** 需求：返回的json数据格式
      * {
@@ -31,27 +30,29 @@ public class CustomerDeserializationSchema implements DebeziumDeserializationSch
      */
 
     /*mysql SourceRecord数据源to_string
-    * SourceRecord{
-    *   sourcePartition={server=mysql_binlog_source},
-    *   sourceOffset={transaction_id=null, ts_sec=1648398062, file=myslq-bin.000001, pos=1736, row=1, server_id=1, event=2}
-    * }
-    *
-    * ConnectRecord{
-    *   topic='mysql_binlog_source.flink_test.cdc_test',
-    *   kafkaPartition=null,
-    *   key=null,
-    *   keySchema=null,
-    *   value=Struct{
-    *       before=Struct{id=1001,name=张馨予,sex=男},
-    *       after=Struct{id=1001,name=张馨予,sex=女},
-    *       source=Struct{version=1.5.2.Final,connector=mysql,name=mysql_binlog_source,ts_ms=1648398062000,db=flink_test,table=cdc_test,server_id=1,file=myslq-bin.000001,pos=1886,row=0},
-    *       op=u,ts_ms=1648398062282
-    *   },
-    *   valueSchema=Schema{mysql_binlog_source.flink_test.cdc_test.Envelope:STRUCT},
-    *   timestamp=null,
-    *   headers=ConnectHeaders(headers=)
-    * }
+     * SourceRecord{
+     *   sourcePartition={server=mysql_binlog_source},
+     *   sourceOffset={transaction_id=null, ts_sec=1648398062, file=myslq-bin.000001, pos=1736, row=1, server_id=1, event=2}
+     * }
+     *
+     * ConnectRecord{
+     *   topic='mysql_binlog_source.flink_test.cdc_test',
+     *   kafkaPartition=null,
+     *   key=null,
+     *   keySchema=null,
+     *   value=Struct{
+     *       before=Struct{id=1001,name=张馨予,sex=男},
+     *       after=Struct{id=1001,name=张馨予,sex=女},
+     *       source=Struct{version=1.5.2.Final,connector=mysql,name=mysql_binlog_source,ts_ms=1648398062000,db=flink_test,table=cdc_test,server_id=1,file=myslq-bin.000001,pos=1886,row=0},
+     *       op=u,ts_ms=1648398062282
+     *   },
+     *   valueSchema=Schema{mysql_binlog_source.flink_test.cdc_test.Envelope:STRUCT},
+     *   timestamp=null,
+     *   headers=ConnectHeaders(headers=)
+     * }
      * */
+
+public class CustomerDeserializationSchema implements DebeziumDeserializationSchema<String> {
 
     public void deserialize(SourceRecord sourceRecord, Collector<String> collector) throws Exception {
 
@@ -59,13 +60,13 @@ public class CustomerDeserializationSchema implements DebeziumDeserializationSch
         JSONObject result = new JSONObject();
 
         //2.获取数据源记录 sourceRecord 具体信息
-        //1）获取cdc数据源:库名、表名
+        //1）获取 topic——cdc数据源:库名、表名
         String topic = sourceRecord.topic();
         String[] split = topic.split("\\.");
         result.put("db", split[1]);
         result.put("table", split[2]);
 
-        //2）获取数据中的 before 信息
+        //2）获取数据 value 中的 before 信息
         Struct value = (Struct) sourceRecord.value();//value是一个struct数据类型
         Struct before = value.getStruct("before");
         JSONObject beforeJSON = new JSONObject();
