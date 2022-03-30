@@ -1,5 +1,6 @@
 package cdc_test;
 
+import cdc_test.pojo.UserInfo;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -22,7 +23,7 @@ public class FlinkSqlCDC {
 
         //2.使用FLINKSQL DDL模式构建CDC 表
         tableEnv.executeSql("CREATE TABLE user_info ( " +
-                " id STRING primary key, " +
+                " id int primary key, " +
                 " name STRING, " +
                 " sex STRING " +
                 ") WITH ( " +
@@ -39,7 +40,11 @@ public class FlinkSqlCDC {
         //3.查询数据并转换为流输出
         Table table = tableEnv.sqlQuery("select * from user_info");
         DataStream<Tuple2<Boolean, Row>> retractStream = tableEnv.toRetractStream(table, Row.class);
-        retractStream.print();
+        retractStream.print("row-data");
+
+        // retractStream 可以转为 POJO类：对应两边schema信息必须一致
+        DataStream<Tuple2<Boolean, UserInfo>> userInfo = tableEnv.toRetractStream(table, UserInfo.class);
+        userInfo.print("user-pojo");
 
         //4.启动
         env.execute("FlinkSQLCDC");
