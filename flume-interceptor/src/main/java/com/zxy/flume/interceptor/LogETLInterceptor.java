@@ -19,7 +19,7 @@ public class LogETLInterceptor implements Interceptor {
     }
 
     /**
-     * 作用：数据清洗：将不是
+     * 作用：数据清洗：将不满足条件的event排除
      * @param event
      * @return
      */
